@@ -1,60 +1,125 @@
 ﻿using System;
-using System.Threading;
 
-// --- PROJETO FINAL: IHC & UX NO CONSOLE ---
-Console.Clear();
-Console.ForegroundColor = ConsoleColor.Yellow;
-Console.WriteLine("===========================================");
-Console.WriteLine("       GLOBAL EXCHANGE - CONVERSOR v1.0    ");
-Console.WriteLine("===========================================");
-Console.ResetColor();
-
-try
+class Program
 {
-    // --- Entrada de Dados (UX de Instrução) ---
-    Console.Write("\nDigite o valor em REAIS (R$): ");
-    string entrada = Console.ReadLine();
-
-    // Corrige vírgula x ponto automaticamente
-    double valorReais = double.Parse(entrada.Replace(",", "."));
-
-    Console.Write("Digite a cotação do DÓLAR hoje (ex: 5,20): ");
-    string entradaDolar = Console.ReadLine();
-    double cotacaoDolar = double.Parse(entradaDolar.Replace(",", "."));
-
-    // --- Visibilidade do Status ---
-    Console.WriteLine("\n[SISTEMA]: Conectando ao Banco Central...");
-    Thread.Sleep(1000);
-
-    Console.Write("[SISTEMA]: Calculando taxas");
-    for (int i = 0; i < 3; i++)
+    static void Main()
     {
-        Thread.Sleep(500);
-        Console.Write(".");
+        // Heurística #1: Visibilidade do Status
+        // → Mostra em qual passo o usuário está
+
+        // Heurística #3: Controle e Liberdade
+        // → Usuário pode digitar "voltar" ou "cancelar"
+
+        // Heurística #9: Ajuda e Erros
+        // → Mensagens claras quando ocorre erro
+
+        int codigoProduto = 0;
+        int quantidade = 0;
+        string entrada;
+
+        // PASSO 1 - Código do Produto
+        while (true)
+        {
+            Console.Clear();
+            Console.WriteLine("[Passo 1 de 3] - Seleção de Produto");
+            Console.WriteLine("Digite o código do produto (1 a 10)");
+            Console.WriteLine("Digite 'cancelar' para sair");
+
+            entrada = Console.ReadLine();
+
+            if (entrada.ToLower() == "cancelar")
+            {
+                Console.WriteLine("Pedido cancelado.");
+                return;
+            }
+
+            if (!int.TryParse(entrada, out codigoProduto))
+            {
+                Console.WriteLine("Entrada inválida! Digite apenas números.");
+                Console.ReadKey();
+                continue;
+            }
+
+            if (codigoProduto < 1 || codigoProduto > 10)
+            {
+                Console.WriteLine($"Código {codigoProduto} não encontrado. Nossos códigos vão de 1 a 10.");
+                Console.ReadKey();
+                continue;
+            }
+
+            break;
+        }
+
+        // PASSO 2 - Quantidade
+        while (true)
+        {
+            Console.Clear();
+            Console.WriteLine("[Passo 2 de 3] - Quantidade");
+            Console.WriteLine("Digite a quantidade desejada");
+            Console.WriteLine("Digite 'voltar' para retornar ou 'cancelar'");
+
+            entrada = Console.ReadLine();
+
+            if (entrada.ToLower() == "cancelar")
+            {
+                Console.WriteLine("Pedido cancelado.");
+                return;
+            }
+
+            if (entrada.ToLower() == "voltar")
+            {
+                Main();
+                return;
+            }
+
+            if (!int.TryParse(entrada, out quantidade))
+            {
+                Console.WriteLine("Quantidade inválida! Digite apenas números.");
+                Console.ReadKey();
+                continue;
+            }
+
+            if (quantidade <= 0)
+            {
+                Console.WriteLine("A quantidade deve ser maior que zero.");
+                Console.ReadKey();
+                continue;
+            }
+
+            break;
+        }
+
+        // PASSO 3 - Confirmação
+        while (true)
+        {
+            Console.Clear();
+            Console.WriteLine("[Passo 3 de 3] - Confirmação");
+            Console.WriteLine($"Produto: {codigoProduto}");
+            Console.WriteLine($"Quantidade: {quantidade}");
+            Console.WriteLine("Confirmar pedido? (sim/voltar/cancelar)");
+
+            entrada = Console.ReadLine().ToLower();
+
+            if (entrada == "cancelar")
+            {
+                Console.WriteLine("Pedido cancelado.");
+                return;
+            }
+
+            if (entrada == "voltar")
+            {
+                Main();
+                return;
+            }
+
+            if (entrada == "sim")
+            {
+                Console.WriteLine("Pedido realizado com sucesso!");
+                break;
+            }
+
+            Console.WriteLine("Opção inválida!");
+            Console.ReadKey();
+        }
     }
-
-    // --- Lógica de Negócio ---
-    double resultado = valorReais / cotacaoDolar;
-
-    // --- Estética e Design Minimalista ---
-    Console.ForegroundColor = ConsoleColor.Green;
-    Console.WriteLine("\n\n-------------------------------------------");
-    Console.WriteLine($"VALOR CONVERTIDO: $ {resultado:F2} (Dólares)");
-    Console.WriteLine("-------------------------------------------");
-    Console.ResetColor();
-}
-catch (Exception)
-{
-    // --- Prevenção de Erros ---
-    Console.BackgroundColor = ConsoleColor.Red;
-    Console.ForegroundColor = ConsoleColor.White;
-    Console.WriteLine("\n\n [ERRO CRÍTICO] ");
-    Console.ResetColor();
-    Console.WriteLine("Entrada inválida! Use apenas números e vírgula.");
-}
-finally
-{
-    Console.WriteLine("\nObrigado por usar o Global Exchange. Volte sempre!");
-    Console.WriteLine("Pressione qualquer tecla para finalizar...");
-    Console.ReadKey();
 }
